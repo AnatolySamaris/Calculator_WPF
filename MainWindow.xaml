@@ -10,24 +10,59 @@
         Width="345"
         WindowStartupLocation="CenterScreen" Background="#FF131418" ResizeMode="CanResizeWithGrip">
     <Window.Resources>
-        <Style x:Key="BrightButton" TargetType="Button">
+        <Style TargetType="Button" x:Key="BrightButton">
             <Setter Property="Background" Value="#424242"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Margin" Value="1.5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1.5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#332f2c"/>
                 </Trigger>
             </Style.Triggers>
-            
         </Style>
-        <Style x:Key="DarkButton" TargetType="Button">
+
+        <Style TargetType="Button" x:Key="DarkButton">
             <Setter Property="Background" Value="#212121"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Margin" Value="1.5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1.5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#332f2c"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="Button" x:Key="CalculateButton">
+            <Setter Property="Background" Value="#009999"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="1.5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#006666"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -56,11 +91,11 @@
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Foreground="White" HorizontalContentAlignment="Right"
-                   VerticalAlignment="Bottom" FontSize="16" Content="12450000"/>
-            <TextBox Grid.Row="1" Background="#131418" Foreground="White" TextAlignment="Right"
-                     VerticalAlignment="Stretch" VerticalContentAlignment="Bottom" Text="0" FontSize="32" 
-                     BorderBrush="{x:Null}" IsReadOnly="True"/>
+            <Label Grid.Row="0" Name="Warning"  Background="#131418" Foreground="White" HorizontalAlignment="Right"
+                   FontSize="16" BorderBrush="{x:Null}"/>
+            <TextBox x:Name="ExpScreen" Grid.Row="1" Background="#131418" Foreground="White" TextAlignment="Right"
+                     VerticalAlignment="Stretch" VerticalContentAlignment="Bottom" FontSize="32" 
+                     BorderBrush="{x:Null}" IsReadOnly="True" Text="0"/>
         </Grid>
 
         <!-- Панель ввода -->
@@ -80,31 +115,32 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource BrightButton}">%</Button>
-            <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource BrightButton}">CE</Button>
-            <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource BrightButton}">C</Button>
-            <Button Grid.Row="0" Grid.Column="3" Style="{StaticResource BrightButton}">&#x232B;</Button>
-            <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource BrightButton}">1/x</Button>
-            <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource BrightButton}">x²</Button>
-            <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource BrightButton}">√x</Button>
-            <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource BrightButton}">÷</Button>
-            <Button Grid.Row="2" Grid.Column="3" Style="{StaticResource BrightButton}">×</Button>
-            <Button Grid.Row="3" Grid.Column="3" Style="{StaticResource BrightButton}">-</Button>
-            <Button Grid.Row="4" Grid.Column="3" Style="{StaticResource BrightButton}">+</Button>
-            <Button Grid.Row="5" Grid.Column="3" Background="#009999" Foreground="White">=</Button>
+            <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource BrightButton}" Content="%" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource BrightButton}" Content="CE" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource BrightButton}" Content="C" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="0" Grid.Column="3" Style="{StaticResource BrightButton}" Content="&#x232B;" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource BrightButton}" Content="1/x" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource BrightButton}" Content="x²" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource BrightButton}" Content="√x" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource BrightButton}" Content="÷" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="2" Grid.Column="3" Style="{StaticResource BrightButton}" Content="×" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="3" Grid.Column="3" Style="{StaticResource BrightButton}" Content="-" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="4" Grid.Column="3" Style="{StaticResource BrightButton}" Content="+" Click="Operation_Button_Click"></Button>
 
-            <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource DarkButton}">7</Button>
-            <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource DarkButton}">8</Button>
-            <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource DarkButton}">9</Button>
-            <Button Grid.Row="3" Grid.Column="0" Style="{StaticResource DarkButton}">4</Button>
-            <Button Grid.Row="3" Grid.Column="1" Style="{StaticResource DarkButton}">5</Button>
-            <Button Grid.Row="3" Grid.Column="2" Style="{StaticResource DarkButton}">6</Button>
-            <Button Grid.Row="4" Grid.Column="0" Style="{StaticResource DarkButton}">1</Button>
-            <Button Grid.Row="4" Grid.Column="1" Style="{StaticResource DarkButton}">2</Button>
-            <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource DarkButton}">3</Button>
-            <Button Grid.Row="5" Grid.Column="0" Style="{StaticResource DarkButton}">+/-</Button>
-            <Button Grid.Row="5" Grid.Column="1" Style="{StaticResource DarkButton}">0</Button>
-            <Button Grid.Row="5" Grid.Column="2" Style="{StaticResource DarkButton}">,</Button>
+            <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource DarkButton}" Content="7" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource DarkButton}" Content="8" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource DarkButton}" Content="9" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="3" Grid.Column="0" Style="{StaticResource DarkButton}" Content="4" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="3" Grid.Column="1" Style="{StaticResource DarkButton}" Content="5" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="3" Grid.Column="2" Style="{StaticResource DarkButton}" Content="6" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="4" Grid.Column="0" Style="{StaticResource DarkButton}" Content="1" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="4" Grid.Column="1" Style="{StaticResource DarkButton}" Content="2" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource DarkButton}" Content="3" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="5" Grid.Column="0" Style="{StaticResource DarkButton}" Content="+/-" Click="Operation_Button_Click"></Button>
+            <Button Grid.Row="5" Grid.Column="1" Style="{StaticResource DarkButton}" Content="0" Click="Number_Button_Click"></Button>
+            <Button Grid.Row="5" Grid.Column="2" Style="{StaticResource DarkButton}" Content="." Click="Operation_Button_Click"></Button>
+
+            <Button Grid.Row="5" Grid.Column="3" Style="{StaticResource CalculateButton}" Content="=" Click="Calculate_Button_Click"></Button>
         </Grid>
     </Grid>
 </Window>
