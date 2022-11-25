@@ -61,7 +61,6 @@ namespace No_Way_This_Is_A_Calculator
         {
             result = 0;
             lastOperation = "";
-            ExpScreen.Text = "0";
             start = true;
             input = false;
         }
@@ -262,6 +261,14 @@ namespace No_Way_This_Is_A_Calculator
                     break;
                 case "x!":
                     double num = ToDouble(ExpScreen.Text);
+
+                    if (num > 170)
+                    {
+                        ExpScreen.Text = "0";
+                        Warning.Content = "Слишком большое число";
+                        Clean();
+                        break;
+                    }
 
                     if (Math.Floor(num) == Math.Ceiling(num) && num > 0)
                     {
