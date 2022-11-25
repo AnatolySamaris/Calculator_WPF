@@ -61,8 +61,19 @@ namespace No_Way_This_Is_A_Calculator
         {
             result = 0;
             lastOperation = "";
+            ExpScreen.Text = "0";
             start = true;
             input = false;
+        }
+
+        private void CheckInfinity()
+        {
+            if (ExpScreen.Text == "∞")
+            {
+                ExpScreen.Text = "0";
+                Warning.Content = "Слишком большое число";
+                Clean();
+            }
         }
 
         private double TrigAns(double n)
@@ -102,7 +113,7 @@ namespace No_Way_This_Is_A_Calculator
             {
                 powering = false;
                 result = Math.Pow(result, ToDouble(ExpScreen.Text));
-                ExpScreen.Text = result.ToString();
+                ExpScreen.Text = "0";
                 Warning.Content = "";
             }
 
@@ -141,22 +152,14 @@ namespace No_Way_This_Is_A_Calculator
                     else ExpScreen.Text = (1.0 / ToDouble(ExpScreen.Text)).ToString();
                     break;
                 case "x²":
-                    if (ToDouble(ExpScreen.Text) < 0)
-                    {
-                        Clean();
-                        Warning.Content = "Число должно быть неотрицательным";
-                    }
-                    else
-                    {
-                        ExpScreen.Text = (Math.Pow(ToDouble(ExpScreen.Text), 2)).ToString();
-                        Warning.Content = "";
-                    }
+                    ExpScreen.Text = (Math.Pow(ToDouble(ExpScreen.Text), 2)).ToString();
+                    Warning.Content = "";
                     break;
                 case "√x":
                     if (ToDouble(ExpScreen.Text) < 0)
                     {
-                        Clean();
                         Warning.Content = "Число должно быть неотрицательным";
+                        Clean();
                     }
                     else
                     {
@@ -177,16 +180,40 @@ namespace No_Way_This_Is_A_Calculator
                     Warning.Content = "";
                     break;
                 case "tan":
-                    ExpScreen.Text = TrigAns(Math.Tan(ToDouble(ExpScreen.Text) * Math.PI / 180)).ToString();
-                    Warning.Content = "";
+                    if (ToDouble(ExpScreen.Text) % 90 == 0 && ToDouble(ExpScreen.Text) % 180 != 0)
+                    {
+                        Warning.Content = "Тангенс такого угла не существует";
+                        Clean();
+                    }
+                    else
+                    {
+                        ExpScreen.Text = TrigAns(Math.Tan(ToDouble(ExpScreen.Text) * Math.PI / 180)).ToString();
+                        Warning.Content = "";
+                    }
                     break;
                 case "log":
-                    ExpScreen.Text = Math.Log10(ToDouble(ExpScreen.Text)).ToString();
-                    Warning.Content = "";
+                    if (ToDouble(ExpScreen.Text) > 0)
+                    {
+                        ExpScreen.Text = Math.Log10(ToDouble(ExpScreen.Text)).ToString();
+                        Warning.Content = "";
+                    }
+                    else
+                    {
+                        Warning.Content = "Число должно быть больше нуля";
+                        Clean();
+                    }
                     break;
                 case "ln":
-                    ExpScreen.Text = Math.Log(ToDouble(ExpScreen.Text)).ToString();
-                    Warning.Content = "";
+                    if (ToDouble(ExpScreen.Text) > 0)
+                    {
+                        ExpScreen.Text = Math.Log(ToDouble(ExpScreen.Text)).ToString();
+                        Warning.Content = "";
+                    }
+                    else
+                    {
+                        Warning.Content = "Число должно быть больше нуля";
+                        Clean();
+                    }
                     break;
                 case "exp":
                     ExpScreen.Text = Math.Exp(ToDouble(ExpScreen.Text)).ToString();
@@ -253,12 +280,13 @@ namespace No_Way_This_Is_A_Calculator
                     }
                     else
                     {
-                        Warning.Content = "Число отрицательное или не целое";
+                        Warning.Content = "Число должно быть натуральным";
                         Clean();
                     }
                     break;
                 case "xⁿ":
-                    ExpScreen.Text = Math.Pow(result, ToDouble(ExpScreen.Text)).ToString();
+                    result = Math.Pow(result, ToDouble(ExpScreen.Text));
+                    ExpScreen.Text = "0";
                     powering = false;
                     break;
                 default: break;
@@ -298,6 +326,7 @@ namespace No_Way_This_Is_A_Calculator
             {
                 ExpScreen.Text = result.ToString();
                 Warning.Content = "";
+                CheckInfinity();
                 Clean();
             }
         }
@@ -318,7 +347,7 @@ namespace No_Way_This_Is_A_Calculator
 
             if (button == "+")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -334,12 +363,13 @@ namespace No_Way_This_Is_A_Calculator
                 {
                     DoOperation(lastOperation);
                     Warning.Content = result.ToString();
+                    CheckInfinity();
                 }
                 lastOperation = button;
             }
             else if (button == "-")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -355,12 +385,13 @@ namespace No_Way_This_Is_A_Calculator
                 {
                     DoOperation(lastOperation);
                     Warning.Content = result.ToString();
+                    CheckInfinity();
                 }
                 lastOperation = button;
             }
             else if (button == "×")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -376,12 +407,13 @@ namespace No_Way_This_Is_A_Calculator
                 {
                     DoOperation(lastOperation);
                     Warning.Content = result.ToString();
+                    CheckInfinity();
                 }
                 lastOperation = button;
             }
             else if (button == "÷")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -397,21 +429,23 @@ namespace No_Way_This_Is_A_Calculator
                 {
                     DoOperation(lastOperation);
                     Warning.Content = result.ToString();
+                    CheckInfinity();
                 }
                 lastOperation = button;
             }
             else if (button == "1/x" || button == "x²" || button == "√x" || button == "%")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
                 }
                 DoOperation(button);
+                CheckInfinity();
             }
             else if (button == "+/-")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -421,7 +455,7 @@ namespace No_Way_This_Is_A_Calculator
             }
             else if (button == ".")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -443,10 +477,12 @@ namespace No_Way_This_Is_A_Calculator
                 Clean();
                 ExpScreen.Text = "0";
                 Warning.Content = "Все вычисления очищены";
+                input = false;
+                powering = false;
             }
             else if (button == "sin")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -455,7 +491,7 @@ namespace No_Way_This_Is_A_Calculator
             }
             else if (button == "asin")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -464,7 +500,7 @@ namespace No_Way_This_Is_A_Calculator
             }
             else if (button == "cos")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -473,7 +509,7 @@ namespace No_Way_This_Is_A_Calculator
             }
             else if (button == "acos")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -482,7 +518,7 @@ namespace No_Way_This_Is_A_Calculator
             }
             else if (button == "tan")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -491,7 +527,7 @@ namespace No_Way_This_Is_A_Calculator
             }
             else if (button == "atan")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -500,7 +536,7 @@ namespace No_Way_This_Is_A_Calculator
             }
             else if (button == "xⁿ")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -519,47 +555,52 @@ namespace No_Way_This_Is_A_Calculator
                     powering = true;
                     lastOperation = "";
                     Warning.Content = result.ToString();
+                    CheckInfinity();
                 }
             }
             else if (button == "log")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
                 }
                 DoOperation(button);
+                CheckInfinity();
             }
             else if (button == "exp")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
                 }
                 DoOperation(button);
+                CheckInfinity();
             }
             else if (button == "ln")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
                 }
                 DoOperation(button);
+                CheckInfinity();
             }
             else if (button == "x!")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
                 }
                 DoOperation(button);
+                CheckInfinity();
             }
             else if (button == "mod")
             {
-                if (!input)
+                if (!input && ExpScreen.Text == "0")
                 {
                     Warning.Content = "Требуется ввод";
                     return;
@@ -575,6 +616,7 @@ namespace No_Way_This_Is_A_Calculator
                 {
                     DoOperation(lastOperation);
                     Warning.Content = result.ToString();
+                    CheckInfinity();
                 }
                 lastOperation = button;
             }
